@@ -10,8 +10,10 @@ Conda env running python 3.
 
 ### Prokka, Spades, Tophat, Cufflinks
 ```sh 
-conda install -c bioconda prokka spades tophat cufflinks```
+conda install -c bioconda prokka spades tophat cufflinks
+```
 
 ## Command line options
 ```sh 
-miniproject --help ```
+miniproject --help
+```
