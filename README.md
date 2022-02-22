@@ -14,7 +14,7 @@ conda install -c bioconda prokka spades tophat cufflinks
 ```
 
 ## Command line options
-```sh 
+``` 
 miniproject --help
    -h --help      display command line options
    -t --threads   number of CPUs to use in computation
