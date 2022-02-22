@@ -9,7 +9,9 @@ Lab strains of cells are used by researchers with the expectation that the same 
 Conda env running python 3.  
 
 ### Prokka, Spades, Tophat, Cufflinks
-```sh conda install -c bioconda prokka spades tophat cufflinks```
+```sh 
+conda install -c bioconda prokka spades tophat cufflinks```
 
 ## Command line options
-```sh miniproject --help ```
+```sh 
+miniproject --help ```
