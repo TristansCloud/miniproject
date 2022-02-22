@@ -8,7 +8,8 @@ Lab strains of cells are used by researchers with the expectation that the same 
 ### Conda  
 Conda env running python 3.  
 
-## Prokka  
-```{sh} conda install -c conda-forge -c bioconda -c defaults prokka ```  
-## Spades  
-```{sh} conda install -c conda-forge -c bioconda -c defaults prokka ```  
+### Prokka, Spades, Tophat, Cufflinks
+```sh conda install -c bioconda prokka spades tophat cufflinks```
+
+## Command line options
+```sh miniproject --help ```
