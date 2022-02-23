@@ -18,12 +18,12 @@ conda install -c bioconda biopython sra-tools prokka spades tophat cufflinks
 
 ### Prokka issue
 
-Prokka v1.13 is installed by bioconda, higher versions of prokka through `conda install` is not possible at this time to my knowledge, at least not without dependency conflicts. I gave up eventually. Conda's version has a few fixable errors. The first isand a `Can't locate Bio/Root/Version.pm` error.I fixed this by running the following code. Change [env_name] to the name of your conda environment. (github.com/tseemann/prokka/issues/519)
+Prokka v1.13 is installed by bioconda, higher versions of prokka through `conda install` is not possible at this time to my knowledge, at least not without dependency conflicts. I gave up eventually. Conda's version has a few fixable errors. The first is a `Can't locate Bio/Root/Version.pm` error. I fixed this by running the following code. Change [env_name] to the name of your conda environment. (github.com/tseemann/prokka/issues/519)
 ```
 conda env config vars set PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/ -n [env_name]
 conda activate -n [env_name]
 ```  
-The second is an issue with prokka parsing the blastp version installed. It parses as a string, so prokka thinks v2.2 is greater than v2.12 which is installed. (github.com/tseemann/prokka/issues/449)
+The second is an issue with prokka parsing the blastp version installed. It parses as a string, so prokka thinks its v2.2 requirement is greater than v2.12 which is installed. (github.com/tseemann/prokka/issues/449)
 ```
 cd $CONDA_PREFIX/bin
 nano prokka

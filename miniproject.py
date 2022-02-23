@@ -7,7 +7,7 @@
 ##    3. Filter the assembled reads to only include contigs longer than 1000bp
 ##    4. Calculate the length of the assembly
 ##    5. Use Prokka to annotate the assembly
-##    6. Write Prokka results to logfile
+##    6. Write Prokka summary results to logfile
 ##    7. Find discrepencies in coding sequences and tRNAs between the Prokka assembly and RefSeq NC_000913
 ##    8. Use Tophat and Cufflinks to map reads of the K-12 derivative BW38028 and quantify their expression using the annotated genome NC_000913
 ##    9. Parse Cufflink output and create transcriptome_data.fpkm, which includes the  the seqname, start, end, strand, and FPKM for each record in the Cufflinks output file.
@@ -15,7 +15,7 @@
 
 #====  0. Import libraries and parse command line options ========
 
-import os, argparse, multiprocessing
+import os, argparse, multiprocessing, glob, string
 from Bio import SeqIO
 
 ap = argparse.ArgumentParser()
@@ -53,17 +53,20 @@ with open("results/miniproject.log","a") as handle:
 
 #==== 3. Filter the assembled reads to only include contigs longer than 1000bp ========
 
-long = []
+contigs = []
 assembly_len = 0
 
 with open("results/SPAdes/contigs.fasta") as handle:
     for read in SeqIO.parse(handle,"fasta"):
         if len(read.seq) > 1000:
-            long.append(read)
+            contigs.append(read)
             assembly_len += len(read.seq)
 
 with open("results/miniproject.log","a") as handle:
-    handle.write("There are " + str(len(long)) + " contigs > 1000 in the assembly.\n")
+    handle.write("There are " + str(len(contigs)) + " contigs > 1000 in the assembly.\n")
+
+with open("results/1000bpcontigs.fasta", "w") as handle:
+    SeqIO.write(contigs, handle, "fasta")
 
 #==== 4. Calculate the length of the assembly ========
 
@@ -71,3 +74,47 @@ with open("results/miniproject.log","a") as handle:
     handle.write("There are " + str(assembly_len) + " bp in the assembly.\n")
 
 #==== 5. Use Prokka to annotate the assembly ========
+
+# clear any previous results (hope you didn't need them!) from prokka folder or make a folder for the prokka results if one doesn't exist
+# if os.path.isdir("results/prokka"):
+#     for f in os.listdir("results/prokka"):
+#         os.remove(os.path.join("results/prokka", f))
+# else:
+#     os.mkdir("results/prokka")
+
+with open("results/miniproject.log","a") as handle:
+    handle.write("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta\n")
+
+# os.system("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta")
+
+#==== 6. Write Prokka summary results to logfile ========
+
+os.system("cat results/prokka/*.txt >> results/miniproject.log")
+
+#==== 7. Find discrepencies in coding sequences and tRNAs between the Prokka assembly and RefSeq NC_000913 ====
+
+results = dict()
+
+# bit of a hack using glob.glob() to get around the date suffix, but since I cleared the prokka results directory there will only be one .txt file.
+for filename in glob.glob("results/prokka/*.txt"):
+    with open(filename, "r") as handle:
+        lines = handle.readlines()
+        for line in lines:
+            key, value = string.strip(line).split(": ")
+            results[key] = value
+
+NC_000913_CDS = 4140
+NC_000913_tRNA = 89
+
+with open("results/miniproject.log","a") as handle:
+    handle.write("Prokka found ")
+
+    if NC_000913_CDS - int(results["CDS"]) > 0:
+        handle.write(str(NC_000913_CDS - int(results["CDS"])) + " less CDS and ")
+    else:
+        handle.write(str(abs(NC_000913_CDS - int(results["CDS"]))) + " additional CDS and ")
+
+    if NC_000913_tRNA - int(results["tRNA"]) > 0:
+        handle.write(str(NC_000913_tRNA - int(results["tRNA"])) + " less tRNA than the RefSeq\n")
+    else:
+        handle.write(str(abs(NC_000913_tRNA - int(results["tRNA"]))) + " more tRNA than the RefSeq\n")
