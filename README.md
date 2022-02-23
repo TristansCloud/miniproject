@@ -13,6 +13,13 @@ Conda environment running python 2.7. Tested on python 2.7.18
 conda install -c bioconda biopython sra-tools prokka spades tophat cufflinks
 ```
 
+### Prokka issue
+
+Prokka installed by bioconda can give a `Can't locate Bio/Root/Version.pm` error. I fixed this by running the following code. Change [env_name] to the name of your conda environment. (github.com/tseemann/prokka/issues/519)
+```
+conda env config vars set PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/ -n [env_name]
+```
+
 ## Command line options
 ``` 
 python miniproject.py --help
