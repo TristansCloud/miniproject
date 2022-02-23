@@ -6,16 +6,16 @@ Lab strains of cells are used by researchers with the expectation that the same 
   
 ## Software Requirements  
 ### Conda  
-Conda env running python 3.  
+Conda environment running python 2.7. Tested on python 2.7.18  
 
-### Install Prokka, Spades, Tophat, and Cufflinks
+### Install Biopython, sra-tools, Prokka, SPAdes, Tophat, and Cufflinks
 ```sh 
-conda install -c bioconda prokka spades tophat cufflinks
+conda install -c bioconda biopython sra-tools prokka spades tophat cufflinks
 ```
 
 ## Command line options
 ``` 
 python miniproject.py --help
-   -h --help      Display command line options
-   -t --threads   Number of CPUs to use in computation. Defaults to half the number of available CPUs
+   -h --help      show this help message and exit
+   -t --threads   Number of CPUs to use in computation. Defaults to half the number of available CPUs (I ran this on my own server)
 ```
