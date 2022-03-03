@@ -118,3 +118,32 @@ with open("results/miniproject.log","a") as handle:
         handle.write(str(NC_000913_tRNA - int(results["tRNA"])) + " less tRNA than the RefSeq\n")
     else:
         handle.write(str(abs(NC_000913_tRNA - int(results["tRNA"]))) + " more tRNA than the RefSeq\n")
+
+#==== 8. Use Tophat and Cufflinks to map reads of the K-12 derivative BW38028 and quantify their expression using the annotated genome NC_000913
+
+# retrieve K-12 derivative BW38028
+# os.system("prefetch SRR1411276 -O results")
+
+# # unpack the BW38028 .sra file to a fasta file
+#os.system("fastq-dump -I --fasta --outdir results results/SRR1411276/SRR1411276.sra")
+
+# check if bowtie2 results folder exists and make it if it doesn't
+if not os.path.isdir("results/bowtie2"):
+    os.mkdir("results/bowtie2")
+
+# build bowtie2 index files
+# os.system("bowtie2-build NC_000913.fasta results/bowtie2/NC_000913 --threads " + str(args['threads']))
+
+# check if tophat results folder exists and make it if it doesn't
+if not os.path.isdir("results/tophat"):
+    os.mkdir("results/tophat")
+
+# map reads using tophat, do not do novel splice site discovery
+# os.system("tophat --no-novel-juncs --num-threads " + str(args['threads']) + " --output-dir results/tophat results/bowtie2/NC_000913 results/SRR1411276.fasta")
+
+# check if cufflinks results folder exists and make it if it doesn't
+if not os.path.isdir("results/cufflinks"):
+    os.mkdir("results/cufflinks")
+
+# cufflinks 
+os.system("cufflinks --num-threads " + str(args['threads']) + " -o results/cufflinks results/tophat/accepted_hits.bam")
