@@ -27,15 +27,19 @@ args = vars(ap.parse_args())
 if not os.path.isdir("results"):
     os.mkdir("results")
 
+print("running miniproject with " + str(args['threads']) + " threads\n")
+
 with open("results/miniproject.log","w") as handle:
     handle.write("running miniproject with " + str(args['threads']) + " threads\n")
 
 # #==== 1. Retrieve Illumina reads for the resequencing of the K-12 project ========
 
 # retrieve files using SRA-toolkit
+print("prefetch SRX5005282 -O results\n")
 os.system("prefetch SRX5005282 -O results")
 
 # unpack the .sra file
+print("fastq-dump -I --outdir results results/SRR8185310/SRR8185310.sra\n")
 os.system("fastq-dump -I --outdir results results/SRR8185310/SRR8185310.sra")
 
 
@@ -45,11 +49,13 @@ os.system("fastq-dump -I --outdir results results/SRR8185310/SRR8185310.sra")
 if not os.path.isdir("results/SPAdes"):
     os.mkdir("results/SPAdes")
 
+print("spades.py -k 55,77,99,127 -t " + str(args['threads']) + " -s results/SRR8185310.fastq -o results/SPAdes/\n")
+
 # write spades command to logfile
 with open("results/miniproject.log","a") as handle:
     handle.write("spades.py -k 55,77,99,127 -t " + str(args['threads']) + " -s results/SRR8185310.fastq -o results/SPAdes\n")
 
-# os.system("spades.py -k 55,77,99,127 -t " + str(args['threads']) + " -s results/SRR8185310.fastq -o results/SPAdes")
+os.system("spades.py -k 55,77,99,127 -t " + str(args['threads']) + " -s results/SRR8185310.fastq -o results/SPAdes/")
 
 #==== 3. Filter the assembled reads to only include contigs longer than 1000bp ========
 
@@ -62,6 +68,8 @@ with open("results/SPAdes/contigs.fasta") as handle:
             contigs.append(read)
             assembly_len += len(read.seq)
 
+print("There are " + str(len(contigs)) + " contigs > 1000 in the assembly.\n")
+
 with open("results/miniproject.log","a") as handle:
     handle.write("There are " + str(len(contigs)) + " contigs > 1000 in the assembly.\n")
 
@@ -69,6 +77,8 @@ with open("results/1000bpcontigs.fasta", "w") as handle:
     SeqIO.write(contigs, handle, "fasta")
 
 #==== 4. Calculate the length of the assembly ========
+
+print("There are " + str(assembly_len) + " bp in the assembly.\n")
 
 with open("results/miniproject.log","a") as handle:
     handle.write("There are " + str(assembly_len) + " bp in the assembly.\n")
@@ -82,13 +92,15 @@ if os.path.isdir("results/prokka"):
 else:
     os.mkdir("results/prokka")
 
+print("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta\n")
+
 with open("results/miniproject.log","a") as handle:
     handle.write("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta\n")
 
-# os.system("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta")
+os.system("prokka --cpus " + str(args['threads']) + " --force --genus Escherichia --usegenus --outdir results/prokka results/1000bpcontigs.fasta")
 
 #==== 6. Write Prokka summary results to logfile ========
-
+os.system("cat results/prokka/*.txt")
 os.system("cat results/prokka/*.txt >> results/miniproject.log")
 
 #==== 7. Find discrepencies in coding sequences and tRNAs between the Prokka assembly and RefSeq NC_000913 ========
@@ -149,7 +161,7 @@ if not os.path.isdir("results/cufflinks"):
 # cufflinks 
 os.system("cufflinks --num-threads " + str(args['threads']) + " -o results/cufflinks results/tophat/accepted_hits.bam")
 
-#==== 9. Parse Cufflink output and create transcriptome_data.fpkm, which includes the seqname, start, end, strand, and FPKM for each record in the Cufflinks output file ========
+#==== 9. Parse Cufflink output and create transcriptome_data.fpkm, which includes the seqname, start, end, and FPKM for each record in the Cufflinks output file ========
 
 with open("results/cufflinks/genes.fpkm_tracking") as handle:
     dataframe = pandas.read_csv(handle,delimiter="\t")
