@@ -56,7 +56,7 @@ nano prokka
 # Change MINVER  => "2.2" to MINVER  => "2.1"
 ```
 
-## Bowtie2 issue
+### Bowtie2 issue
 
 Bowtie2 installed from bioconda produces the error `error while loading shared libraries: libtbb.so.2: cannot open shared object file: No such file or directory`. To fix this on Ubuntu/Debian run:
 ```
