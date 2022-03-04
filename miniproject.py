@@ -2,14 +2,14 @@
 ## 
 ## Main steps
 ##    0. Import libraries and parse command line options
-##    1. Retrieve Illumina reads for the resequencing of the K-12 project
-##    2. Use SPAdes to assemble the reads
+##    1. Retrieve SRR8185310 Illumina reads for the resequencing of the K-12 project
+##    2. Use SPAdes to assemble the SRR8185310 reads
 ##    3. Filter the assembled reads to only include contigs longer than 1000bp
 ##    4. Calculate the length of the assembly
 ##    5. Use Prokka to annotate the assembly
 ##    6. Write Prokka summary results to logfile
 ##    7. Find discrepencies in coding sequences and tRNAs between the Prokka assembly and RefSeq NC_000913
-##    8. Use Tophat and Cufflinks to map reads of the K-12 derivative BW38028 and quantify their expression using the annotated genome NC_000913
+##    8. Use Bowtie2, Tophat, and Cufflinks to map reads of the K-12 derivative BW38028 and quantify their expression using the annotated genome NC_000913
 ##    9. Parse Cufflink output and create transcriptome_data.fpkm, which includes the seqname, start, end, strand, and FPKM for each record in the Cufflinks output file
 
 
