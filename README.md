@@ -10,15 +10,19 @@ Conda environment running python 2.7. Tested on python 2.7.18
 ```
 conda create -n miniproj python=2.7.18
 ```
+## Install pandas
+```
+conda install pandas
+```
 
-### Install Biopython, SRA-tools, Prokka, SPAdes, Tophat, and Cufflinks
+### Install Biopython, SRA-tools, Prokka, SPAdes, Bowtie2, Tophat, and Cufflinks
 ```sh 
-conda install -c bioconda biopython sra-tools prokka spades tophat cufflinks
+conda install -c bioconda biopython sra-tools prokka spades bowtie2 tophat cufflinks
 ```
 
 ### Prokka issue
 
-Prokka v1.13 is installed by bioconda, higher versions of prokka through `conda install` is not possible at this time to my knowledge, at least not without dependency conflicts. I gave up eventually. Conda's version has a few fixable errors. The first is a `Can't locate Bio/Root/Version.pm` error. I fixed this by running the following code. Change [env_name] to the name of your conda environment. (github.com/tseemann/prokka/issues/519)
+Prokka v1.13 is installed by bioconda by default, higher versions of prokka through `conda install` are not possible at this time to my knowledge, at least not without dependency conflicts. I gave up eventually. Conda's version has a few fixable errors. The first is a `Can't locate Bio/Root/Version.pm` error. I fixed this by running the following code. Change [env_name] to the name of your conda environment. (github.com/tseemann/prokka/issues/519)
 ```
 conda env config vars set PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/ -n [env_name]
 conda activate -n [env_name]
@@ -32,6 +36,13 @@ nano prokka
 # Change MINVER  => "2.2" to MINVER  => "2.1"
 # A few lines down is the option for makeblastdb, do the same change you did for blastp:
 # Change MINVER  => "2.2" to MINVER  => "2.1"
+```
+
+## Bowtie2 issue
+
+Bowtie2 installed from bioconda produces the error `error while loading shared libraries: libtbb.so.2: cannot open shared object file: No such file or directory`. To fix this on Ubuntu/Debian run:
+```
+sudo apt-get install libtbb2
 ```
 
 ## Command line options
